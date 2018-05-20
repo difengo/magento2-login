@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Config/etc/system_file.xsd">
+    <system>
+        <tab id="difengo" translate="label" sortOrder="10">
+            <label>Difengo</label>
+        </tab>
+ 
+        <section id="difengo_login" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Login</label>
+            <tab>difengo</tab>
+            <resource>Difengo_Login::difengo_login</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General</label>
+                <field id="enable" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Difengo Login</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        Enables or disables the Difengo authentication option.
+                    </comment>
+                </field>
+                
+            </group>
+        </section>
+ 
+    </system>
+</config>
