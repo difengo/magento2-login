@@ -1,6 +1,6 @@
 {
-  "name": "difengo/login",
-  "description": "Plugin to login with Difengo",
+  "name": "difengo/magento2-login",
+  "description": "Magento2 plugin to login with Difengo",
   "type": "magento2-module",
   "version": "1.0.0",
   "license": [
@@ -10,7 +10,7 @@
     
   },
   "require": {        
-    "php": "7.0.2|7.0.4|~7.0.6|~7.1.0"
+    "php": "^7.0.0"
   },
   "autoload": {
     "files": ["registration.php"],
