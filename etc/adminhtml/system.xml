@@ -6,13 +6,13 @@
             <label>Difengo</label>
         </tab>
  
-        <section id="difengo_login" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <section id="login" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Login</label>
             <tab>difengo</tab>
-            <resource>Difengo_Login::difengo_login</resource>
+            <resource>Difengo_Login::configuration</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>General</label>
-                <field id="enable" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Difengo Login</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>

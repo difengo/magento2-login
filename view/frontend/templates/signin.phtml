@@ -1,0 +1,35 @@
+<?php
+/**
+ * Difengo signin form template
+ *
+ * @see \Difengo\Login\Block\Form\SignIn
+ * @var $block \Difengo\Login\Block\Form\SignIn
+ */
+?>
+
+<form class="form" action="signin/result" method="post">
+
+<fieldset class="fieldset">
+    <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Difengo Login') ?></span></legend><br>
+    <div class="field required">
+        <label for="difengo_token" class="label">
+            <span><?php /* @escapeNotVerified */ echo __('Token') ?></span>
+        </label>
+
+        <div class="control">
+            <input type="text" id="difengo_token"
+                   name="difengo_token"
+                   class="input-text">
+        </div>
+    </div>
+</fieldset>
+
+<div class="actions-toolbar">
+    <div class="primary">
+        <button type="submit" class="action submit primary" title="<?php /* @escapeNotVerified */ echo __('Submit') ?>">
+            <span><?php /* @escapeNotVerified */ echo __('Submit') ?></span>
+        </button>
+    </div>
+</div>
+
+</form>
