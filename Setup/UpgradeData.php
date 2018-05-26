@@ -51,7 +51,7 @@ class UpgradeData implements UpgradeDataInterface
         $attributeCode = "difengo_id";
         $customAttribute = $customerSetup->getEavConfig()->getAttribute('customer', $attributeCode);
 
-        if($customerAttribute == null)
+        if($customAttribute == null)
         {
             $this->logger->addInfo('Installing Difengo custom attributes...');
 
