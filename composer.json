@@ -11,7 +11,7 @@
   },
   "require": {        
     "php": "^7.0.0",
-    "ramsey/uuid": "^2.9"
+    "ramsey/uuid": "3.7.3"
   },
   "autoload": {
     "files": ["registration.php"],
