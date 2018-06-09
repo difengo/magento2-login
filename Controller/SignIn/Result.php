@@ -205,12 +205,55 @@ class Result extends Action
                 }
                 else
                 {
-                    //TODO: compare existing addresses with received addresses
+                    $this->logger->addInfo('Some existing addresses were found.');
+
+                    $addressesToCreate = array();
+
+                    foreach($addresses as $address)
+                    {
+                        $name = $address->getCustomAttribute(AttributeSetup::DIFENGO_ID);
+
+                        $this->logger->addInfo('Existing address: ' . $name);
+
+                        if($name != null)
+                        {
+                            $inReturnedAddresses = false;
+
+                            foreach ($apiCustomer->addresses as $apiAddress)
+                            {
+                                if(isset($apiAddress->name))
+                                {
+                                    if(!array_key_exists($apiAddress->name, $addressesToCreate))
+                                        $addressesToCreate[$apiAddress->name] = $apiAddress;
+
+                                    if($apiAddress->name == $name)
+                                    {
+                                        if(array_key_exists($apiAddress->name, $addressesToCreate))
+                                            unset($addressesToCreate[$apiAddress->name]);
+
+                                        $inReturnedAddresses = true;
+                                        $this->updateAddress($address, $apiAddress);
+                                    }
+                                }
+                            }
+                            
+                            if($inReturnedAddresses == false)
+                            {
+                                $this->deleteAddress($address);
+                                $save = true;
+                            } 
+                        }
+                    }
+
+                    foreach ($addressesToCreate as $key => $value)
+                    {
+                        $this->createAddress($customer, $value, false);
+                    }
                 }
                 
                 if($save == true)
                 {
-
+                    $customer->cleanAllAddresses();
                     $customer->save();
                     $this->logger->addInfo('Customer ' . $customer->getId() . ' has been updated.');
                 }
@@ -241,19 +284,23 @@ class Result extends Action
                 $customer->setCreatedIn($store->getName());
                 $customer->setData(AttributeSetup::DIFENGO_ID, $apiCustomer->id);
                 $customer->setConfirmation(null);
-                //TODO: manage address
                 
-
-
-                if($apiCustomer->gender)
+                if(isset($apiCustomer->gender))
                     $customer->setGender($apiCustomer->gender);
 
-
-                    
-
-                // Save data
+                // Save customer
                 $customer->save();
 
+                $defaultDelivery = false;
+
+                if(count($apiCustomer->addresses) == 1)
+                    $defaultDelivery = true;
+
+                foreach ($apiCustomer->addresses as $apiAddress)
+                {
+                    $this->createAddress($customer, $apiAddress, $defaultDelivery);
+                }
+                
                 $this->logger->addInfo('New customer was created.');
 
                 $this->session->setData(self::DIFENGO_TOKEN, $token);
@@ -304,7 +351,7 @@ class Result extends Action
         return $resultRedirect->setPath($page);
     }
 
-    private function createAddress($customer, $apiAddress, $defaultDelivery)
+    private function getStreet($apiAddress)
     {
         $street = $apiAddress->line1;
 
@@ -314,6 +361,15 @@ class Result extends Action
             $street .= $apiAddress->line3;
         if(isset($apiAddress->line4))
             $street .= $apiAddress->line4;
+
+        return $street;
+    }
+
+    private function createAddress($customer, $apiAddress, $defaultDelivery)
+    {
+        $this->logger->addInfo('Creating new address...');
+
+        $street = $this->getStreet($apiAddress);
 
         $firstName = $customer->getFirstname();
 
@@ -348,15 +404,75 @@ class Result extends Action
             ->setStreet($street)
             ->setIsDefaultBilling('0')
             ->setIsDefaultShipping($delivery)
-            ->setSaveInAddressBook('1'); 
+            ->setSaveInAddressBook('1')
+            ->setCustomAttribute(AttributeSetup::DIFENGO_ID, $apiAddress->name);
         
         $address->save();
+
+        $this->logger->addInfo('New address created: ' . $apiAddress->name);
     }
 
-    private function hasAddress($addresses, $address)
+    private function updateAddress($address, $apiAddress)
     {
-        
+        $this->logger->addInfo('Updating existing address...');
 
+        $save = false;
+
+        if(isset($apiAddress->firstName) && $address->getFirstname() != $apiAddress->firstName) {
+            $address->setFirstname($apiAddress->firstName);
+            $save = true;
+        }
         
+        if(isset($apiAddress->lastName) && $address->getLastname() != $apiAddress->lastName) {
+            $address->setFirstname($apiAddress->lastName);
+            $save = true;
+        }
+
+        if(isset($apiAddress->company) && $address->getCompany() != $apiAddress->company) {
+            $address->setCompany($apiAddress->company);
+            $save = true;
+        }
+
+        $street = $this->getStreet($apiAddress);
+
+        if($address->getStreet() != $street) {
+            $address->setStreet($street);
+            $save = true;
+        }
+
+        if($address->getPostcode() != $apiAddress->postalCode) {
+            $address->setPostcode($apiAddress->postalCode);
+            $save = true;
+        }
+
+        if($address->getCity() != $apiAddress->city) {
+            $address->setCity($apiAddress->city);
+            $save = true;
+        }
+
+        if($address->getTelephone() != $apiAddress->phone) {
+            $address->setTelephone($apiAddress->phone);
+            $save = true;
+        }
+
+        if($address->getCountryId() != $apiAddress->country) {
+            $address->setCountryId($apiAddress->country);
+            $save = true;
+        }
+            
+        if($save == true)
+        {
+            $address->save();
+            $this->logger->addInfo('Existing address updated.');
+        }
+    }
+
+    private function deleteAddress($address)
+    {
+        $this->logger->addInfo('Deleting existing address...');
+
+        $address->delete();
+
+        $this->logger->addInfo('Existing address deleted.');
     }
 }
