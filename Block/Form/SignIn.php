@@ -4,6 +4,7 @@ namespace Difengo\Login\Block\Form;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Customer\Block\Form\Login;
 use Psr\Log\LoggerInterface;
 
 class SignIn extends Template
@@ -14,7 +15,7 @@ class SignIn extends Template
      *
      * @var LoggerInterface
      */
-    protected $_logger;
+    protected $logger;
 
     /**
      * @param \Magento\Framework\App\Action\Context $context
@@ -22,12 +23,12 @@ class SignIn extends Template
      */
     public function __construct(
         Context $context,
-        \Psr\Log\LoggerInterface $logger
+        LoggerInterface $logger
     )
     {
-        $this->_logger = $logger;
+        $this->logger = $logger;
 
-        $this->_logger->addInfo('Sign In Block was instanciated.');
+        $this->logger->addInfo('Sign In Block was instanciated.');
 
         parent::__construct($context);
     }
@@ -37,5 +38,18 @@ class SignIn extends Template
         $this->_logger->addInfo('getTitle was called.');
 
         return 'Difengo Login';
+    }
+
+    public function getFormAction()
+    {
+        return '/difengo/signin/result';
+    }
+
+    /**
+     * @return $this
+     */
+    protected function _prepareLayout()
+    {
+        return $this;
     }
 }

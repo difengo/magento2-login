@@ -7,7 +7,12 @@
  */
 ?>
 
-<form class="form" action="signin/result" method="post">
+<form class="form"
+    action="<?php /* @escapeNotVerified */ echo $block->getFormAction(); ?>"
+    id="difengo-form"
+    method="post" 
+    data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>"
+    data-mage-init='{"validation":{}}'>
 
 <fieldset class="fieldset">
     <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Difengo Login') ?></span></legend><br>
@@ -17,13 +22,15 @@
         </label>
 
         <div class="control">
-            <input type="text" id="difengo_token"
-                   name="difengo_token"
-                   class="input-text">
+            <input type="text" 
+                    data-validate="{required:true, minlength:13, maxlength:13}"
+                    id="difengo_token"
+                    name="difengo_token"
+                    class="input-text" />
         </div>
     </div>
 </fieldset>
-
+<div id="message-container"></div>
 <div class="actions-toolbar">
     <div class="primary">
         <button type="submit" class="action submit primary" title="<?php /* @escapeNotVerified */ echo __('Submit') ?>">
@@ -33,3 +40,16 @@
 </div>
 
 </form>
+<script>
+    require([
+        "jquery",
+        "mage/mage"
+    ], function($){
+        var dataForm = $('#difengo-form');
+        dataForm.mage('validation', {
+            errorPlacement: function(error, element) {
+                error.appendTo('#message-container');
+            },
+        });
+    });
+</script>
